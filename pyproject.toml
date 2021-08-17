@@ -6,6 +6,7 @@ authors = ["Zach Pang <zachery.pang@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "~3.9.6"
+Django = "^3.2.6"
 
 [tool.poetry.dev-dependencies]
 
