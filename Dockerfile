@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM python:3.9.6-slim-buster
 
 # This prevents Python from writing out pyc files
@@ -18,14 +19,14 @@ RUN pip install -U pip && \
 
 WORKDIR /code
 
-# prepend .venv to $PATH
+# prepend .venv to $PATH, and create .venv dir in-project
 ENV VIRTUAL_ENV="/code/.venv"
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN python -m venv --upgrade-deps .venv
 
 COPY poetry.lock pyproject.toml /code/
 
-# Install project dependencies to a in-project .venv directory
+# Install project dependencies into .venv directory
 ENV POETRY_VIRTUALENVS_IN_PROJECT=true
 RUN poetry install
 
