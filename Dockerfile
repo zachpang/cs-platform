@@ -28,7 +28,7 @@ COPY poetry.lock pyproject.toml /code/
 
 # Install project dependencies into .venv directory
 ENV POETRY_VIRTUALENVS_IN_PROJECT=true
-RUN poetry install
+RUN poetry install --no-dev
 
 ## TODO:
 # - remove build libraries required for pycopg2
