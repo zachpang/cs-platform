@@ -18,6 +18,8 @@ services:
     container_name: csweb
     volumes:
       - ./server:/code/server
+      - ./pyproject.toml:/code/pyproject.toml
+      - ./poetry.lock:/code/poetry.lock
     ports:
       - "8000:8000"
     depends_on:
