@@ -6,6 +6,8 @@ services:
     container_name: csdb
     volumes:
       - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
     environment:
       - POSTGRES_DB=csdb
       - POSTGRES_USER=csroot
