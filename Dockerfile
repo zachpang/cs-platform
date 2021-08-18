@@ -26,3 +26,4 @@ RUN poetry install
 
 COPY . .
 
+CMD ["poetry", "run", "server/manage.py", "runserver", "0.0.0.0:8000"]
