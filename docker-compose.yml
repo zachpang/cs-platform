@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:13.4
+    container_name: csdb
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=csdb
+      - POSTGRES_USER=csroot
+      - POSTGRES_PASSWORD=cspass
+
+  web:
+    image: cs-platform-web
+    build: .
+    command: poetry run server/manage.py runserver 0.0.0.0:8000
+    container_name: csweb
+    volumes:
+      - ./server:/code/server
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db

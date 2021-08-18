@@ -22,3 +22,6 @@
 .dockerignore
 Dockerfile
 docker-compose.yml
+
+# docker volumes
+/pgdata

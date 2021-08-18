@@ -15,3 +15,5 @@ db.sqlite3-journal
 # VS Code
 .vscode/
 
+# Docker volumes to ignore
+pgdata
