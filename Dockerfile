@@ -7,9 +7,14 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Ensures that Python output is logged to the host terminal.
 ENV PYTHONUNBUFFERED=1
 
-# Install CLI dependencies
+# Install OS-level dependencies
 RUN pip install -U pip && \
-    pip install poetry
+    pip install poetry && \
+    apt-get update &&\
+    apt-get -y --no-install-recommends install \
+    libpq-dev \
+    python3-dev\
+    gcc
 
 WORKDIR /code
 
@@ -21,8 +26,12 @@ RUN python -m venv --upgrade-deps .venv
 COPY poetry.lock pyproject.toml /code/
 
 # Install project dependencies to a in-project .venv directory
-ARG POETRY_VIRTUALENVS_IN_PROJECT=true
+ENV POETRY_VIRTUALENVS_IN_PROJECT=true
 RUN poetry install
+
+## TODO:
+# - remove build libraries required for pycopg2
+# - explore multi-stage build
 
 COPY . .
 
