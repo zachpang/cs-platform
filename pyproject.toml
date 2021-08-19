@@ -13,12 +13,28 @@ djangorestframework = "^3.12.4"
 [tool.poetry.dev-dependencies]
 black = "^21.7b0"
 isort = "^5.9.3"
+pytest = "^6.2.4"
+pytest-mock = "^3.6.1"
+pytest-django = "^4.4.0"
+factory-boy = "^3.2.0"
+pytest-env = "^0.6.2"
 
 [tool.isort]
 # make it compatible with black
 profile = "black" 
 sections = ['FUTURE', 'STDLIB', 'DJANGO', 'THIRDPARTY','FIRSTPARTY', 'LOCALFOLDER']
 known_django = ['django', 'rest_framework']
+
+[tool.pytest.ini_options]
+python_files = "test*.py"
+
+# since manage.py is not in the same dir as this config file,
+# we need to help pytest-django by stating PYTHONPATH explicitly
+django_find_project = false
+env = [
+    "PYTHONPATH = server"
+]
+
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
