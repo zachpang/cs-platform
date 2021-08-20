@@ -27,14 +27,7 @@ known_django = ['django', 'rest_framework']
 
 [tool.pytest.ini_options]
 python_files = "test*.py"
-
-# since manage.py is not in the same dir as this config file,
-# we need to help pytest-django by stating PYTHONPATH explicitly
-django_find_project = false
-env = [
-    "PYTHONPATH = server"
-]
-
+DJANGO_SETTINGS_MODULE = "config.settings"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

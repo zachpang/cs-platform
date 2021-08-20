@@ -26,3 +26,6 @@ services:
       - "8000:8000"
     depends_on:
       - db
+    environment:
+      # required by pytest-django to find manage.py
+      - PYTHONPATH=server
