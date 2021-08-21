@@ -28,6 +28,7 @@ known_django = ['django', 'rest_framework']
 [tool.pytest.ini_options]
 python_files = "test*.py"
 DJANGO_SETTINGS_MODULE = "config.settings"
+addopts = "--reuse-db"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
