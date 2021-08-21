@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Substitute custom User model
+AUTH_USER_MODEL = "users.EmailUser"
 
 # Application definition
 
