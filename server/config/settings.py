@@ -73,6 +73,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+CSRF_COOKIE_SECURE = True
 
 # Rest Framework
 REST_FRAMEWORK = {
