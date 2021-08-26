@@ -4,18 +4,6 @@ import factory
 import pytest
 from users.models import EmailUser, EmailUserManager
 
-# class EmailUserFactory(factory.django.DjangoModelFactory):
-
-
-@pytest.fixture
-def email(faker):
-    return faker.company_email()
-
-
-@pytest.fixture
-def password(faker):
-    return faker.password(length=16)
-
 
 @pytest.mark.django_db
 class TestEmailUser:

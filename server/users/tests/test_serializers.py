@@ -7,16 +7,6 @@ import pytest
 from users.serializers import CreateUserSerializer
 
 
-@pytest.fixture
-def email(faker):
-    return faker.company_email()
-
-
-@pytest.fixture
-def password(faker):
-    return faker.password(length=16)
-
-
 @pytest.mark.django_db
 class TestCreateUserSerializer:
     def test_deserialize_should_return_correct_fields(self, email, password):
