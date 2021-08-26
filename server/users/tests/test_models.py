@@ -106,6 +106,20 @@ class TestEmailUserManager:
             EmailUser.objects, email, password, is_staff=True, is_superuser=True
         )
 
+    def test_create_should_call_create_user_with_correct_args(
+        self, email, password, mocker
+    ):
+        # given
+        mocker.patch.object(EmailUserManager, "create_user", autospec=True)
+
+        # when
+        EmailUser.objects.create(email=email, password=password)
+
+        # then
+        EmailUserManager.create_user.assert_called_once_with(
+            EmailUser.objects, email, password
+        )
+
 
 class TestManagementCommands:
     # TODO:

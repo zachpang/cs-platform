@@ -49,6 +49,13 @@ class EmailUserManager(UserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+    def create(self, **kwargs):
+        """
+        Overrides create() in QuerySet class so that EmailUser.objects.create()
+        will route to create_user() in this class
+        """
+        return self.create_user(**kwargs)
+
 
 class EmailUser(AbstractUser):
     """
