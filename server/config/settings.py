@@ -73,7 +73,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+# Set to True, cookie will be marked as “secure”.
+# This means browsers may ensure that the cookie is only sent with an HTTPS connection.
+# The browser will not send any secure cookies if sent on HTTP
 CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = ["test-domain.com"]  # TODO: externalize test settings
 
 # Rest Framework
 REST_FRAMEWORK = {
