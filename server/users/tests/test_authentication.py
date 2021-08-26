@@ -57,6 +57,7 @@ class TestCsrfAuthentication:
         "secure,referer,has_csrfcookie,csrftoken,reason",
         [
             (False, TRUSTED_REFERER, True, "csrftoken", REASON_NO_HTTPS),
+            (True, None, True, "csrftoken", REASON_NO_REFERER),
             (
                 True,
                 "https://malicious.com/",
