@@ -35,7 +35,7 @@ class TestCreateUserSerializer:
 
         assert "A user with that email address already exists" in str(excinfo.value)
 
-    def test_deserialize_is_not_valid_given_malformed_email(self, email, password):
+    def test_deserialize_is_not_valid_given_malformed_email(self, password):
         # given
         data = {"email": "bad_email", "password": password}
 
@@ -60,3 +60,28 @@ class TestCreateUserSerializer:
         # then
         assert serializer.data["email"] == email
         assert "password" not in serializer.data
+
+
+@pytest.mark.django_db
+class TestLoginUserSerializer:
+    def test_deserialize_should_return_correct_fields(self, email, password):
+        # given
+        data = {"email": email, "password": password}
+
+        # when
+        serializer = CreateUserSerializer(data=data)
+
+        # then
+        assert serializer.is_valid()
+        assert serializer.validated_data == data
+
+    def test_deserialize_is_not_valid_given_malformed_email(self, password):
+        # given
+        data = {"email": "bad_email", "password": password}
+
+        # when
+        serializer = CreateUserSerializer(data=data)
+
+        # then
+        with pytest.raises(ValidationError) as excinfo:
+            serializer.is_valid(raise_exception=True)

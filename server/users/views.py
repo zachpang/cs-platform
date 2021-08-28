@@ -1,13 +1,19 @@
+import logging
+
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
-from rest_framework.generics import GenericAPIView
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin
+from rest_framework import exceptions
+from rest_framework.mixins import CreateModelMixin
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
+from users.services import LoginUserService
+
 from .authentication import CsrfAuthentication
-from .serializers import CreateUserSerializer
+from .serializers import CreateUserSerializer, LoginUserSerializer
+
+logger = logging.getLogger(__name__)
 
 
 class CsrfCookieView(APIView):
@@ -38,6 +44,34 @@ class UserViewSet(CreateModelMixin, GenericViewSet):
         return response
 
 
-class LoginView(RetrieveModelMixin, GenericAPIView):
-    # TODO:
-    pass
+class LoginUserView(GenericViewSet):
+    authentication_classes = [CsrfAuthentication]
+    serializer_class = LoginUserSerializer
+
+    def login(self, request, *args, **kwargs):
+        """
+        A request needs to provide registered email and password in return for JWT
+        refresh and access token
+        """
+        # validate email and password with serializer
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email, password = (
+            serializer.validated_data["email"],
+            serializer.validated_data["password"],
+        )
+
+        # pass to LoginUserService and retrieve user and jwt
+        login_user_service = LoginUserService(email, password)
+        try:
+            user = login_user_service.login()
+        except exceptions.AuthenticationFailed as e:
+            logger.error(f"{e.__class__} - {e.default_detail} - Email Used: {email}")
+            raise
+
+        # set jwt tokens on cookies
+        response = Response({"details": "User authenticated successfully."})
+        login_user_service.set_cookies_for_response(response)
+
+        return response
