@@ -2,7 +2,7 @@ import logging
 
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
-from rest_framework import exceptions
+from rest_framework import exceptions, status
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -32,14 +32,23 @@ class CsrfCookieView(APIView):
         return Response({"details": "CSRF cookie is set"})
 
 
-class UserViewSet(CreateModelMixin, GenericViewSet):
+class UserViewSet(GenericViewSet):
     authentication_classes = [CsrfAuthentication]
     serializer_class = CreateUserSerializer
 
     def register(self, request, *args, **kwargs):
-        response = self.create(request, *args, **kwargs)
+        # validate then create user
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
 
-        # TODO: Login registered user, create JWT and set in secure, httpOnly, cookie
+        # prepare response
+        response = Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        # set JWT cookie on response
+        login_user_service = LoginUserService(user=user)
+        login_user_service.prepare_jwt()
+        login_user_service.set_cookies_for_response(response)
 
         return response
 

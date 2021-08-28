@@ -67,8 +67,6 @@ class TestUserViewSet:
         self, email, password, csrf_enforced_client, csrftoken
     ):
         # given
-        csrf_enforced_client.credentials()
-
         data = {"email": email, "password": password}
 
         # when
@@ -77,12 +75,14 @@ class TestUserViewSet:
             data,
             HTTP_X_CSRFTOKEN=csrftoken,
             HTTP_REFERER=TRUSTED_REFERER,
-            secure=True,  # to mimic a HTTPS request sent by browser.
+            secure=True,
         )
 
         # then
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data == {"email": email}
+        assert response.cookies["refresh"]
+        assert response.cookies["access"]
 
 
 class TestLoginUserView:

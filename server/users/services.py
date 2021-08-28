@@ -5,23 +5,36 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class LoginUserService:
-    def __init__(self, email, password):
+    def __init__(self, email=None, password=None, user=None):
         self.email = email
         self.password = password
+        self.user = user
         self.refresh = None
         self.access = None
 
     def login(self):
+        if self.email is None or self.password is None:
+            raise ValueError(
+                "Missing email and/or password. Initialize service with email and password. "
+            )
+
         user = authenticate(email=self.email, password=self.password)
 
         if user is None:
             # permission denied: user does not exist or bad password
             raise exceptions.AuthenticationFailed
 
-        self.refresh = RefreshToken.for_user(user)
-        self.access = self.refresh.access_token
+        self.user = user
+        self.prepare_jwt()
 
         return user
+
+    def prepare_jwt(self):
+        if self.user is None:
+            raise ValueError("Missing user. Initialize service with user instance.")
+
+        self.refresh = RefreshToken.for_user(self.user)
+        self.access = self.refresh.access_token
 
     def set_cookies_for_response(self, response):
         cookie_settings = {
