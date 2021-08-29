@@ -1,11 +1,13 @@
 from django.contrib.auth import authenticate as authenticate_email_password
+from django.middleware.csrf import rotate_token
 from rest_framework import exceptions
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class LoginUserService:
-    def __init__(self, email=None, password=None, user=None):
+    def __init__(self, request, email=None, password=None, user=None):
+        self.request = request
         self.email = email
         self.password = password
         self.user = user
@@ -35,6 +37,7 @@ class LoginUserService:
             )
 
         self.prepare_jwt()
+        rotate_token(self.request)  # reset csrf token
 
     def prepare_jwt(self):
         self.refresh = RefreshToken.for_user(self.user)

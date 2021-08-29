@@ -63,7 +63,7 @@ class TestUserViewSet:
         assert "permission_denied" == response.data["detail"].code
         assert "CSRF Failed: CSRF cookie not set." in str(response.data["detail"])
 
-    def test_post_should_successfully_register_user_given_csrf_token_header(
+    def test_post_should_successfully_register_user_and_login_given_csrf_token_header(
         self, email, password, csrf_enforced_client, csrftoken
     ):
         # given
@@ -77,12 +77,14 @@ class TestUserViewSet:
             HTTP_REFERER=TRUSTED_REFERER,
             secure=True,
         )
+        breakpoint()
 
         # then
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data == {"email": email}
         assert response.cookies["refresh"]
         assert response.cookies["access"]
+        assert response.cookies["csrftoken"].value != csrftoken
 
 
 class TestLoginUserView:
@@ -164,3 +166,4 @@ class TestLoginUserView:
         assert response.data == {"details": "User authenticated successfully."}
         assert response.cookies["refresh"]
         assert response.cookies["access"]
+        assert response.cookies["csrftoken"].value != csrftoken

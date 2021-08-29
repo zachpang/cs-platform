@@ -46,7 +46,7 @@ class UserViewSet(GenericViewSet):
         response = Response(serializer.data, status=status.HTTP_201_CREATED)
 
         # set JWT cookie on response
-        login_user_service = LoginUserService(user=user)
+        login_user_service = LoginUserService(request, user=user)
         login_user_service.login()
         login_user_service.set_cookies_for_response(response)
 
@@ -72,7 +72,7 @@ class LoginUserView(GenericViewSet):
         )
 
         # pass to LoginUserService and retrieve user and jwt
-        login_user_service = LoginUserService(email, password)
+        login_user_service = LoginUserService(request, email, password)
         try:
             user = login_user_service.authenticate()
         except exceptions.AuthenticationFailed as e:
