@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate as authenticate_email_password
 from rest_framework import exceptions
 
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -12,27 +12,31 @@ class LoginUserService:
         self.refresh = None
         self.access = None
 
-    def login(self):
+    def authenticate(self):
         if self.email is None or self.password is None:
             raise ValueError(
                 "Missing email and/or password. Initialize service with email and password. "
             )
 
-        user = authenticate(email=self.email, password=self.password)
+        user = authenticate_email_password(email=self.email, password=self.password)
 
         if user is None:
             # permission denied: user does not exist or bad password
             raise exceptions.AuthenticationFailed
 
         self.user = user
-        self.prepare_jwt()
 
         return user
 
-    def prepare_jwt(self):
+    def login(self):
         if self.user is None:
-            raise ValueError("Missing user. Initialize service with user instance.")
+            raise ValueError(
+                "Missing user. Initialize service with email, password (and call authenticate) or initialize with user instance."
+            )
 
+        self.prepare_jwt()
+
+    def prepare_jwt(self):
         self.refresh = RefreshToken.for_user(self.user)
         self.access = self.refresh.access_token
 

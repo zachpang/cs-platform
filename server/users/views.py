@@ -47,7 +47,7 @@ class UserViewSet(GenericViewSet):
 
         # set JWT cookie on response
         login_user_service = LoginUserService(user=user)
-        login_user_service.prepare_jwt()
+        login_user_service.login()
         login_user_service.set_cookies_for_response(response)
 
         return response
@@ -74,10 +74,12 @@ class LoginUserView(GenericViewSet):
         # pass to LoginUserService and retrieve user and jwt
         login_user_service = LoginUserService(email, password)
         try:
-            user = login_user_service.login()
+            user = login_user_service.authenticate()
         except exceptions.AuthenticationFailed as e:
             logger.error(f"{e.__class__} - {e.default_detail} - Email Used: {email}")
             raise
+
+        login_user_service.login()
 
         # set jwt tokens on cookies
         response = Response({"details": "User authenticated successfully."})

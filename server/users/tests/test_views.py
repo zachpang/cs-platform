@@ -122,19 +122,19 @@ class TestLoginUserView:
         # given
         client = APIClient()
         data = {"email": email, "password": password}
-        mock_login_method = mocker.patch(
-            "users.views.LoginUserService.login",
+        e = AuthenticationFailed()
+        mock_authenticate_method = mocker.patch(
+            "users.views.LoginUserService.authenticate",
             autospec=True,
-            side_effect=AuthenticationFailed,
+            side_effect=e,
         )
         mock_logger_error = mocker.patch("logging.Logger.error", autospec=True)
-        e = AuthenticationFailed()
 
         # when
         response = client.post(reverse("users:login"), data, secure=True)
 
         # then
-        mock_login_method.assert_called_once()
+        mock_authenticate_method.assert_called_once()
         assert response.status_code == status.HTTP_403_FORBIDDEN
         assert "authentication_failed" == response.data["detail"].code
         assert "Incorrect authentication credentials" in str(response.data["detail"])

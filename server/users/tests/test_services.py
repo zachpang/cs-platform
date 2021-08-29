@@ -44,25 +44,55 @@ class TestLoginUserService:
         assert service.refresh is None
         assert service.access is None
 
-    def test_login_should_raise_error_given_null_credentials(self):
+    def test_authenticate_should_raise_error_given_null_credentials(self):
         # when
         with pytest.raises(ValueError) as excinfo:
-            LoginUserService().login()
+            LoginUserService().authenticate()
 
         # then
         assert "Missing email and/or password" in str(excinfo)
 
-    def test_login_should_call_authenticate_and_set_jwt_when_successful(
-        self, email, password, mocker, some_user, refresh, access
+    def test_authenticate_should_call_authenticate_email_password(
+        self, email, password, mocker, some_user
     ):
         # given
-        service = LoginUserService(email, password)
-
-        mock_authenticate = mocker.patch(
-            "users.services.authenticate",
+        mock_authenticate_email_password = mocker.patch(
+            "users.services.authenticate_email_password",
             autospec=True,
             return_value=some_user,
         )
+
+        # when
+        service = LoginUserService(email, password)
+        user = service.authenticate()
+
+        # then
+        mock_authenticate_email_password.assert_called_once_with(
+            email=email, password=password
+        )
+        assert user == some_user
+
+    def test_authenticate_should_raise_exception_when_authentication_fails(
+        self, email, password, mocker
+    ):
+        # given
+        mock_authenticate_email_password = mocker.patch(
+            "users.services.authenticate_email_password",
+            autospec=True,
+            return_value=None,
+        )
+
+        # when
+        service = LoginUserService(email, password)
+        with pytest.raises(AuthenticationFailed) as excinfo:
+            service.authenticate()
+
+        # then
+        mock_authenticate_email_password.assert_called_once()
+        assert "Incorrect authentication credentials" in str(excinfo.value)
+
+    def test_login_should_set_jwt(self, mocker, some_user, refresh, access):
+        # given
         mock_refresh_token_for_user = mocker.patch(
             "users.services.RefreshToken.for_user", autospec=True, return_value=refresh
         )
@@ -72,43 +102,22 @@ class TestLoginUserService:
         mock_access_token_property.__get__ = mocker.Mock(return_value=access)
 
         # when
-        user = service.login()
+        service = LoginUserService(user=some_user)
+        service.login()
 
         # then
-        mock_authenticate.assert_called_once_with(email=email, password=password)
         mock_refresh_token_for_user.assert_called_once_with(some_user)
         mock_access_token_property.__get__.assert_called_once()
         assert service.refresh == refresh
         assert service.access == access
-        assert user == some_user
 
-    def test_login_should_raise_exception_when_authentication_fails(
-        self, email, password, mocker
-    ):
-        # given
-        service = LoginUserService(email, password)
-
-        mock_authenticate = mocker.patch(
-            "users.services.authenticate",
-            autospec=True,
-            return_value=None,
-        )
-
-        # when
-        with pytest.raises(AuthenticationFailed) as excinfo:
-            service.login()
-
-        # then
-        mock_authenticate.assert_called_once()
-        assert "Incorrect authentication credentials" in str(excinfo.value)
-
-    def test_prepare_jwt_should_raise_error_given_null_user(self):
+    def test_login_should_raise_error_given_null_user(self):
         # when
         with pytest.raises(ValueError) as excinfo:
             LoginUserService().login()
 
         # then
-        assert "Missing email and/or password" in str(excinfo)
+        assert "Missing user" in str(excinfo)
 
     def test_prepare_jwt_should_create_tokens(self, some_user, refresh, access, mocker):
         # given
