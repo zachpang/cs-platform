@@ -4,9 +4,8 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 import pytest
+from conftest import UserFactory
 from users.views import logger
-
-from .conftest import UserFactory
 
 
 @pytest.fixture
