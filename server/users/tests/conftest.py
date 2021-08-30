@@ -1,5 +1,6 @@
 import factory
 import pytest
+from rest_framework_simplejwt.tokens import RefreshToken
 from users.models import EmailUser
 
 
@@ -21,3 +22,18 @@ class UserFactory(factory.django.DjangoModelFactory):
     password = factory.Faker("password", length=16)
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
+
+
+@pytest.fixture
+def given_user():
+    return UserFactory.build()
+
+
+@pytest.fixture
+def refresh(given_user):
+    return RefreshToken.for_user(given_user)
+
+
+@pytest.fixture
+def access(refresh):
+    return refresh.access_token

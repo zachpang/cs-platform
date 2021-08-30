@@ -141,6 +141,10 @@ SIMPLE_JWT = {
     "JTI_CLAIM": "jti",
 }
 
+# Custom JWTCookieAuthentication settings
+JWT_ACCESS_TOKEN_COOKIE_NAME = "access"
+JWT_REFRESH_TOKEN_COOKIE_NAME = "refresh"
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
