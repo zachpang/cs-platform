@@ -76,7 +76,6 @@ class TestUserViewSet:
             HTTP_REFERER=TRUSTED_REFERER,
             secure=True,
         )
-        breakpoint()
 
         # then
         assert response.status_code == status.HTTP_201_CREATED
