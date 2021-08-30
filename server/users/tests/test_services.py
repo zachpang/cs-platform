@@ -3,11 +3,9 @@ from rest_framework.response import Response
 from rest_framework.test import APIRequestFactory
 
 import pytest
-from _pytest.fixtures import PseudoFixtureDef
-from attr import s
 from rest_framework_simplejwt.tokens import RefreshToken as SimpleJWTRefreshToken
 from users.services import LoginUserService
-from users.tests.conftest import UserFactory, email, password
+from users.tests.conftest import UserFactory
 
 
 @pytest.fixture

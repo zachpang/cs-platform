@@ -1,6 +1,5 @@
 from django.db import IntegrityError
 
-import factory
 import pytest
 from users.models import EmailUser, EmailUserManager
 
