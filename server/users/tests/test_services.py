@@ -12,6 +12,7 @@ def post_request():
     return factory.post("/", {})
 
 
+@pytest.mark.django_db
 class TestLoginUserService:
     def test_init_should_set_args_correctly(
         self, post_request, email, password, given_user
