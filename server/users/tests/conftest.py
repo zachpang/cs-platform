@@ -25,8 +25,8 @@ class UserFactory(factory.django.DjangoModelFactory):
 
 
 @pytest.fixture
-def given_user():
-    return UserFactory.build()
+def given_user(email, password):
+    return UserFactory.build(email=email, password=password)
 
 
 @pytest.fixture

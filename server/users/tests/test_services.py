@@ -3,14 +3,7 @@ from rest_framework.response import Response
 from rest_framework.test import APIRequestFactory
 
 import pytest
-from rest_framework_simplejwt.tokens import RefreshToken as SimpleJWTRefreshToken
 from users.services import LoginUserService
-from users.tests.conftest import UserFactory
-
-
-@pytest.fixture
-def some_user(email, password):
-    return UserFactory.build(email=email, password=password)
 
 
 @pytest.fixture
@@ -19,19 +12,9 @@ def post_request():
     return factory.post("/", {})
 
 
-@pytest.fixture
-def refresh(some_user):
-    return SimpleJWTRefreshToken.for_user(some_user)
-
-
-@pytest.fixture
-def access(refresh):
-    return refresh.access_token
-
-
 class TestLoginUserService:
     def test_init_should_set_args_correctly(
-        self, post_request, email, password, some_user
+        self, post_request, email, password, given_user
     ):
         # when
         service = LoginUserService(post_request, email, password)
@@ -43,12 +26,12 @@ class TestLoginUserService:
         assert service.access is None
 
         # when
-        service = LoginUserService(post_request, user=some_user)
+        service = LoginUserService(post_request, user=given_user)
 
         # then
         assert service.email is None
         assert service.password is None
-        assert service.user == some_user
+        assert service.user == given_user
         assert service.refresh is None
         assert service.access is None
 
@@ -61,13 +44,13 @@ class TestLoginUserService:
         assert "Missing email and/or password" in str(excinfo)
 
     def test_authenticate_should_call_authenticate_email_password(
-        self, post_request, email, password, mocker, some_user
+        self, post_request, email, password, mocker, given_user
     ):
         # given
         mock_authenticate_email_password = mocker.patch(
             "users.services.authenticate_email_password",
             autospec=True,
-            return_value=some_user,
+            return_value=given_user,
         )
 
         # when
@@ -78,7 +61,7 @@ class TestLoginUserService:
         mock_authenticate_email_password.assert_called_once_with(
             email=email, password=password
         )
-        assert user == some_user
+        assert user == given_user
 
     def test_authenticate_should_raise_exception_when_authentication_fails(
         self, post_request, email, password, mocker
@@ -100,7 +83,7 @@ class TestLoginUserService:
         assert "Incorrect authentication credentials" in str(excinfo.value)
 
     def test_login_should_set_necessary_credentials(
-        self, mocker, post_request, some_user, refresh, access
+        self, mocker, post_request, given_user, refresh, access
     ):
         # given
         mock_refresh_token_for_user = mocker.patch(
@@ -113,11 +96,11 @@ class TestLoginUserService:
         mock_rotate_token = mocker.patch("users.services.rotate_token", autospec=True)
 
         # when
-        service = LoginUserService(post_request, user=some_user)
+        service = LoginUserService(post_request, user=given_user)
         service.login()
 
         # then
-        mock_refresh_token_for_user.assert_called_once_with(some_user)
+        mock_refresh_token_for_user.assert_called_once_with(given_user)
         mock_access_token_property.__get__.assert_called_once()
         mock_rotate_token.assert_called_once_with(post_request)
         assert service.refresh == refresh
@@ -132,7 +115,7 @@ class TestLoginUserService:
         assert "Missing user" in str(excinfo)
 
     def test_prepare_jwt_should_create_tokens(
-        self, post_request, some_user, refresh, access, mocker
+        self, post_request, given_user, refresh, access, mocker
     ):
         # given
         mock_refresh_token_for_user = mocker.patch(
@@ -144,20 +127,20 @@ class TestLoginUserService:
         mock_access_token_property.__get__ = mocker.Mock(return_value=access)
 
         # when
-        service = LoginUserService(post_request, user=some_user)
+        service = LoginUserService(post_request, user=given_user)
         service.prepare_jwt()
 
         # then
-        mock_refresh_token_for_user.assert_called_once_with(some_user)
+        mock_refresh_token_for_user.assert_called_once_with(given_user)
         mock_access_token_property.__get__.assert_called_once()
         assert service.refresh == refresh
         assert service.access == access
 
     def test_set_cookies_for_response_should_set_cookies(
-        self, post_request, some_user, refresh, access
+        self, post_request, given_user, refresh, access
     ):
         # given
-        service = LoginUserService(post_request, user=some_user)
+        service = LoginUserService(post_request, user=given_user)
         service.refresh, service.access = refresh, access
 
         response = Response({"details": "yay!"})
