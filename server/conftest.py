@@ -1,7 +1,26 @@
+from rest_framework import status
+from rest_framework.reverse import reverse
+from rest_framework.test import APIClient
+
 import factory
 import pytest
 from rest_framework_simplejwt.tokens import RefreshToken
 from users.models import EmailUser
+
+
+@pytest.fixture
+def csrf_enforced_client():
+    return APIClient(enforce_csrf_checks=True)
+
+
+@pytest.fixture
+def csrftoken(csrf_enforced_client):
+    response = csrf_enforced_client.get(reverse("users:get-csrf-cookie"))
+    assert response.status_code == status.HTTP_200_OK
+    return response.cookies["csrftoken"].value
+
+
+TRUSTED_REFERER = "https://test-domain.com/path/to/"
 
 
 @pytest.fixture

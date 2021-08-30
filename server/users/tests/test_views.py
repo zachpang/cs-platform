@@ -4,28 +4,13 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 import pytest
-from conftest import UserFactory
+from conftest import TRUSTED_REFERER, UserFactory
 from users.views import logger
 
 
 @pytest.fixture
 def data(email, password):
     return {"email": email, "password": password}
-
-
-TRUSTED_REFERER = "https://test-domain.com/path/to/"
-
-
-@pytest.fixture
-def csrf_enforced_client():
-    return APIClient(enforce_csrf_checks=True)
-
-
-@pytest.fixture
-def csrftoken(csrf_enforced_client):
-    response = csrf_enforced_client.get(reverse("users:get-csrf-cookie"))
-    assert response.status_code == status.HTTP_200_OK
-    return response.cookies["csrftoken"].value
 
 
 @pytest.mark.django_db
