@@ -3,7 +3,7 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 import pytest
-from resources.models import Resource
+from resources.models import Quota, Resource
 from resources.tests.conftest import ResourceFactory
 
 
@@ -27,6 +27,34 @@ class TestResourceViewSet:
 
         assert response.status_code == status.HTTP_201_CREATED
         assert Resource.objects.get(owner=given_user).title == data["title"]
+
+    @pytest.mark.parametrize(
+        "resource_count,quota_amount,status",
+        [
+            (3, None, status.HTTP_201_CREATED),  # quota unset = unlimited
+            (3, 0, status.HTTP_403_FORBIDDEN),  # quota set to 0 = no resource
+            (2, 3, status.HTTP_201_CREATED),
+            (3, 3, status.HTTP_403_FORBIDDEN),
+            (4, 3, status.HTTP_403_FORBIDDEN),
+        ],
+    )
+    def test_create_given_existing_resources_and_quota(
+        self, authenticated_client, given_user, resource_count, quota_amount, status
+    ):
+        # given
+        resources = ResourceFactory.create_batch(resource_count, owner=given_user)
+        quota = (
+            Quota.objects.create(amount=quota_amount, user=given_user)
+            if quota_amount is not None
+            else None
+        )
+        data = {"title": "Bitcoin is Sound Money"}
+
+        # when
+        response = authenticated_client.post(reverse("resources:resource-list"), data)
+
+        assert response.status_code == status
+        assert Resource.objects.get(title=data["title"]) if status == 201 else True
 
     def test_list_should_return_user_resources_only(
         self, authenticated_client, given_user
