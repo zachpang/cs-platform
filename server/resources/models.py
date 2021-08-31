@@ -15,3 +15,18 @@ class Resource(models.Model):
             self.title,
             self.owner,
         )
+
+
+class Quota(models.Model):
+    amount = models.PositiveSmallIntegerField(default=0)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.amount)
+
+    def __repr__(self):
+        return "<%s: amount=%s, user=%s>" % (
+            self.__class__.__name__,
+            str(self.amount),
+            self.user,
+        )

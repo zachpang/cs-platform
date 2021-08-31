@@ -8,6 +8,8 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django.utils.translation import gettext_lazy as _
 
+from resources.admin import QuotaInline
+
 from .models import EmailUser
 
 
@@ -61,6 +63,9 @@ class EmailUserAdmin(UserAdmin):
     )
     form = UserChangeForm
     add_form = UserCreationForm
-    list_display = ("email", "first_name", "last_name", "is_staff")
+    list_display = ("email", "first_name", "last_name", "is_staff", "quota")
     search_fields = ("email", "first_name", "last_name")
     ordering = ("email",)
+
+    # attach forms of related models (InlineModelAdmin)
+    inlines = [QuotaInline]
