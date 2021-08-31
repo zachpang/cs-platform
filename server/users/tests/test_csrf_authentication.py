@@ -112,7 +112,9 @@ class TestCsrfAuthentication:
         assert excinfo.value.default_code == "permission_denied"
         assert reason in str(excinfo.value)
 
-    def test_post_request_should_pass(self, request_factory, data, csrftoken):
+    def test_post_request_should_pass_given_credentials(
+        self, request_factory, data, csrftoken
+    ):
         # given
         request = request_factory.post(
             API_URL,
@@ -128,6 +130,7 @@ class TestCsrfAuthentication:
         user, token = CsrfAuthentication().authenticate(request)
 
         # then
+        assert request.csrf_processing_done
         assert user == AnonymousUser()
         assert token is None
 
