@@ -56,3 +56,19 @@ def refresh(given_user):
 @pytest.fixture
 def access(refresh):
     return refresh.access_token
+
+
+@pytest.fixture
+def credentialed_client(csrftoken, csrf_enforced_client, refresh, access):
+    csrf_enforced_client.defaults.update(
+        HTTP_REFERER=TRUSTED_REFERER, HTTP_X_CSRFTOKEN=csrftoken
+    )
+
+    cookie_settings = {"secure": True, "httponly": True, "samesite": "None"}
+
+    csrf_enforced_client.cookies["refresh"] = str(refresh)
+    csrf_enforced_client.cookies["refresh"].update(cookie_settings)
+    csrf_enforced_client.cookies["access"] = str(access)
+    csrf_enforced_client.cookies["access"].update(cookie_settings)
+
+    return csrf_enforced_client
