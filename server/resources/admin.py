@@ -10,4 +10,3 @@ class ResourceAdmin(admin.ModelAdmin):
 
 class QuotaInline(admin.TabularInline):
     model = Quota
-    can_delete = False
