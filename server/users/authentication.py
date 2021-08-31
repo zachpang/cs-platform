@@ -45,6 +45,11 @@ class CsrfAuthentication(SessionAuthentication):
         """
         Returns an `AnonymousUser` if the HTTPS request passes csrf check
         """
+        # check if csrf check is turned off by APIClient during testing
+        if getattr(request, "_dont_enforce_csrf_checks", False):
+            request.csrf_processing_done = True
+            return AnonymousUser(), None
+
         # Reject HTTP requests since CsrfViewMiddleware allows HTTP requests
         if not request.is_secure():
             reason = REASON_NO_HTTPS
@@ -54,7 +59,7 @@ class CsrfAuthentication(SessionAuthentication):
         self.enforce_csrf(request)
 
         # CSRF passed with anonymous user
-        return (AnonymousUser(), None)
+        return AnonymousUser(), None
 
 
 class JWTCookieAuthentication(CsrfAuthentication, JWTAuthentication):

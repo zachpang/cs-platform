@@ -130,3 +130,19 @@ class TestCsrfAuthentication:
         # then
         assert user == AnonymousUser()
         assert token is None
+
+    def test_post_request_should_pass_given_csrf_check_is_off(self, data):
+        # given
+        request_factory = (
+            APIRequestFactory()
+        )  # default __init__ does not enforce csrf check
+
+        request = request_factory.post(API_URL, data)
+
+        # when
+        user, token = CsrfAuthentication().authenticate(request)
+
+        # then
+        assert request.csrf_processing_done
+        assert user == AnonymousUser()
+        assert token is None

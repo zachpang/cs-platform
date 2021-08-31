@@ -21,7 +21,7 @@ class TestUserViewSet:
         data = {"email": email, "password": password}
 
         # when
-        response = client.post(reverse("users:register"), data, secure=True)
+        response = client.post(reverse("users:register"), data)
 
         # then
         assert response.status_code == status.HTTP_201_CREATED
@@ -100,7 +100,7 @@ class TestLoginUserView:
         data = {"email": "bad_email", "password": password}
 
         # when
-        response = client.post(reverse("users:login"), data, secure=True)
+        response = client.post(reverse("users:login"), data)
 
         # then
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -120,7 +120,7 @@ class TestLoginUserView:
         mock_logger_error = mocker.patch("logging.Logger.error", autospec=True)
 
         # when
-        response = client.post(reverse("users:login"), data, secure=True)
+        response = client.post(reverse("users:login"), data)
 
         # then
         mock_authenticate_method.assert_called_once()
