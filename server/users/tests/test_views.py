@@ -15,7 +15,7 @@ def data(email, password):
 
 @pytest.mark.django_db
 class TestUserViewSet:
-    def test_post_should_create_user(self, email, password):
+    def test_post_should_create_user_and_login(self, email, password, csrftoken):
         # given
         client = APIClient()
         data = {"email": email, "password": password}
@@ -26,6 +26,9 @@ class TestUserViewSet:
         # then
         assert response.status_code == status.HTTP_201_CREATED
         assert response.data == {"email": email}
+        assert response.cookies["refresh"]
+        assert response.cookies["access"]
+        assert response.cookies["csrftoken"].value != csrftoken
 
     def test_post_should_fail_without_csrf_token_header(
         self, email, password, csrf_enforced_client
@@ -66,7 +69,9 @@ class TestUserViewSet:
         assert response.data == {"email": email}
         assert response.cookies["refresh"]
         assert response.cookies["access"]
-        assert response.cookies["csrftoken"].value != csrftoken
+        assert (
+            response.cookies["csrftoken"].value != csrftoken
+        )  # different token is issued
 
 
 class TestLoginUserView:
