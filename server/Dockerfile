@@ -34,7 +34,7 @@ RUN poetry install --no-dev
 # - remove build libraries required for pycopg2
 # - explore multi-stage build
 
-# TODO: Fix to only COPY server/ and remove .dockerignore
+# TODO: Fix to only COPY src/ and remove .dockerignore
 COPY . .
 
-CMD ["poetry", "run", "server/manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["poetry", "run", "src/manage.py", "runserver", "0.0.0.0:8000"]

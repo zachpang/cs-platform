@@ -10,7 +10,7 @@ services:
 
   web:
     # install dev-dependencies before running
-    command: bash -c "poetry install && poetry run server/manage.py runserver 0.0.0.0:8000"
+    command: bash -c "poetry install && poetry run src/manage.py runserver 0.0.0.0:8000"
     environment:
       # required by pytest-django to find manage.py
-      - PYTHONPATH=server
+      - PYTHONPATH=src

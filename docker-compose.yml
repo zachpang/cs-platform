@@ -16,13 +16,13 @@ services:
 
   web:
     image: cs-platform-web
-    build: .
-    command: poetry run server/manage.py runserver 0.0.0.0:8000
+    build: ./server
+    command: poetry run src/manage.py runserver 0.0.0.0:8000
     container_name: csweb
     volumes:
-      - ./server:/code/server
-      - ./pyproject.toml:/code/pyproject.toml
-      - ./poetry.lock:/code/poetry.lock
+      - ./server/src:/code/src
+      - ./server/pyproject.toml:/code/pyproject.toml
+      - ./server/poetry.lock:/code/poetry.lock
     ports:
       - "8000:8000"
     depends_on:
