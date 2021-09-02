@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 
+# TODO: externalize all credentials
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -91,7 +93,7 @@ REST_FRAMEWORK = {
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
+# TODO: externalize credentials. Also use dj-db-url to pack values into one url variable
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
