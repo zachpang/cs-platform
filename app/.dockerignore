@@ -1,0 +1,8 @@
+# dependencies dir
+node_modules
+
+# dev related
+/.git/
+.gitignore
+.dockerignore
+Dockerfile
