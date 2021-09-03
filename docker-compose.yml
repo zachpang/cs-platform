@@ -14,15 +14,15 @@ services:
       - POSTGRES_USER=csroot
       - POSTGRES_PASSWORD=cspass
 
-  web:
-    image: cs-platform-web
-    build: ./server
+  api:
+    image: cs-platform-api
+    build: ./api
     command: poetry run src/manage.py runserver 0.0.0.0:8000
-    container_name: csweb
+    container_name: csapi
     volumes:
-      - ./server/src:/code/src
-      - ./server/pyproject.toml:/code/pyproject.toml
-      - ./server/poetry.lock:/code/poetry.lock
+      - ./api/src:/code/src
+      - ./api/pyproject.toml:/code/pyproject.toml
+      - ./api/poetry.lock:/code/poetry.lock
     ports:
       - "8000:8000"
     depends_on:

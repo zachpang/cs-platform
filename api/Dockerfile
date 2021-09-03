@@ -17,14 +17,14 @@ RUN pip install -U pip && \
     python3-dev\
     gcc
 
-WORKDIR /code
+WORKDIR /api
 
 # prepend .venv to $PATH, and create .venv dir in-project
-ENV VIRTUAL_ENV="/code/.venv"
+ENV VIRTUAL_ENV="/api/.venv"
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN python -m venv --upgrade-deps .venv
 
-COPY poetry.lock pyproject.toml /code/
+COPY poetry.lock pyproject.toml /api/
 
 # Install project dependencies into .venv directory
 ENV POETRY_VIRTUALENVS_IN_PROJECT=true
