@@ -15,9 +15,10 @@ services:
       - POSTGRES_PASSWORD=cspass
 
   api:
-    image: cs-platform-api
+    image: cs-platform-api:dev
     build: ./api
     # run poetry install once more to install dev-dependencies
+    # TODO: pass in build args from compose to be consumed by Dockerfile
     command: bash -c "poetry install && poetry run src/manage.py runserver 0.0.0.0:8000"
     container_name: csapi
     volumes:
@@ -31,3 +32,15 @@ services:
     environment:
       # required by pytest-django to find manage.py
       - PYTHONPATH=src
+
+  app:
+    image: cs-platform-app:dev
+    build:
+      context: ./app
+      target: dev
+    command: npm run serve
+    container_name: csapp
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api

@@ -9,4 +9,14 @@ services:
       - POSTGRES_PASSWORD=cspass
 
   api:
+    image: cs-platform-api:prod
     command: poetry run src/manage.py runserver 0.0.0.0:8000
+
+  app:
+    image: cs-platform-app:prod
+    build:
+      target: prod
+    ports:
+      - "80:80"
+    depends_on:
+      - api
