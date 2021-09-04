@@ -1,6 +1,6 @@
 version: "3.8"
 
-# base configuration
+# base configuration for local development
 services:
   db:
     image: postgres:13.4
@@ -17,7 +17,8 @@ services:
   api:
     image: cs-platform-api
     build: ./api
-    command: poetry run src/manage.py runserver 0.0.0.0:8000
+    # run poetry install once more to install dev-dependencies
+    command: bash -c "poetry install && poetry run src/manage.py runserver 0.0.0.0:8000"
     container_name: csapi
     volumes:
       - ./api/src:/code/src
@@ -27,3 +28,6 @@ services:
       - "8000:8000"
     depends_on:
       - db
+    environment:
+      # required by pytest-django to find manage.py
+      - PYTHONPATH=src

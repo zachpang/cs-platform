@@ -1,0 +1,12 @@
+version: "3.8"
+
+# base configuration
+services:
+  db:
+    environment:
+      - POSTGRES_DB=csdb
+      - POSTGRES_USER=csroot
+      - POSTGRES_PASSWORD=cspass
+
+  api:
+    command: poetry run src/manage.py runserver 0.0.0.0:8000
