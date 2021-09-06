@@ -40,6 +40,13 @@ services:
       target: dev
     command: npm run serve
     container_name: csapp
+    volumes:
+      # TODO: move node_modules 1 level up in container/dockerfile, move vue project on host machine 1 level down
+      - ./app/src:/app/src
+      - ./app/tests:/app/tests
+      - ./app/public:/app/public
+      - ./app/package.json:/app/package.json
+      - ./app/package-lock.json:/app/package-lock.json
     ports:
       - "8080:8080"
     depends_on:
