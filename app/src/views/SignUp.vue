@@ -8,28 +8,17 @@
           </h3>
           <div class="box">
             <form @submit.prevent>
-              <div class="field">
-                <label class="label">Email</label>
-                <div class="control">
-                  <input
-                    v-model="email"
-                    class="input"
-                    type="email"
-                    placeholder="email"
-                  />
-                </div>
-              </div>
-              <div class="field">
-                <label class="label">Password</label>
-                <div class="control">
-                  <input
-                    v-model="password"
-                    class="input"
-                    type="password"
-                    placeholder="password"
-                  />
-                </div>
-              </div>
+              <b-field label="Email">
+                <b-input v-model="email" type="email" placeholder="email" />
+              </b-field>
+              <b-field label="Password">
+                <b-input
+                  v-model="password"
+                  type="password"
+                  placeholder="password"
+                  password-reveal
+                />
+              </b-field>
               <div class="field">
                 <div class="control">
                   <button class="button is-dark is-fullwidth" type="submit">
