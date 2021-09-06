@@ -4,7 +4,7 @@
       <div class="columns">
         <div class="column is-one-third is-offset-one-third">
           <h3 class="is-size-3 has-text-weight-bold has-text-centered mb-2">
-            Log in
+            Sign up
           </h3>
           <div class="box">
             <form @submit.prevent>
@@ -33,14 +33,13 @@
               <div class="field">
                 <div class="control">
                   <button class="button is-dark is-fullwidth" type="submit">
-                    Log in
+                    Sign up
                   </button>
                 </div>
               </div>
             </form>
             <div class="has-text-centered mt-5 pt-3 bt">
-              Don't have an account?
-              <router-link to="/signup">Sign up</router-link>.
+              Existing user? <router-link to="/login">Sign in</router-link>.
             </div>
           </div>
         </div>
@@ -51,7 +50,7 @@
 
 <script>
 export default {
-  name: "Login",
+  name: "SignUp",
   data() {
     return {
       email: "",
