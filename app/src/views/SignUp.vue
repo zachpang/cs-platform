@@ -28,7 +28,7 @@
               </div>
             </form>
             <div class="has-text-centered mt-5 pt-3 bt">
-              Existing user? <router-link to="/login">Sign in</router-link>.
+              Existing user? <router-link to="/">Sign in</router-link>.
             </div>
           </div>
         </div>
