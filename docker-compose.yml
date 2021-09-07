@@ -41,11 +41,13 @@ services:
     command: npm run serve
     container_name: csapp
     volumes:
-      # TODO: move node_modules 1 level up in container/dockerfile, move vue project on host machine 1 level down
+      # TODO: refactor directories to reduce number of bind mounts here
+      # move node_modules 1 level up in container/dockerfile, move vue project on host machine 1 level down
       - ./app/src:/app/src
       - ./app/tests:/app/tests
       - ./app/public:/app/public
       - ./app/vue.config.js:/app/vue.config.js
+      - ./app/.env.development:/app/.env.development
       - ./app/package.json:/app/package.json
       - ./app/package-lock.json:/app/package-lock.json
     ports:
